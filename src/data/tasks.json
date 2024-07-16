@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1,
+        "title": "Clean the kitchen",
+        "description": "Clean dishes and wipe counters",
+        "completed": false
+    },
+    {
+        "id": 2,
+        "title": "Take out the trash",
+        "description": "Take the trash out to the curb",
+        "completed": true
+    },
+    {
+        "id": 3,
+        "title": "Vacuum the living room",
+        "description": "Vacuum all carpeted areas",
+        "completed": false
+    },
+    {
+        "id": 4,
+        "title": "Dust the shelves",
+        "description": "Dust all shelves and surfaces",
+        "completed": true
+    },
+    {
+        "id": 5,
+        "title": "Mop the floor",
+        "description": "Mop all hard floor surfaces",
+        "completed": false
+    },
+    {
+        "id": 6,
+        "title": "Organize the closet",
+        "description": "Organize and clean the closet",
+        "completed": false
+    },
+    {
+        "id": 7,
+        "title": "Water the plants",
+        "description": "Water all indoor and outdoor plants",
+        "completed": true
+    },
+    {
+        "id": 8,
+        "title": "Prepare dinner",
+        "description": "Prepare and cook dinner",
+        "completed": false
+    },
+    {
+        "id": 9,
+        "title": "go out with Kaori",
+        "description": "Spend time outside with Kaori",
+        "completed": true
+    },
+    {
+        "id": 10,
+        "title": "buy new chair",
+        "description": "Purchase a new chair for the living room",
+        "completed": false
+    }
+]
