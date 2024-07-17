@@ -1,77 +1,95 @@
 import { useEffect, useState } from "react";
-import data from "../../data/tasks.json"
+import { useDispatch, useSelector } from "react-redux";
+import { TaskThunk } from "../../features/TaskListThunk";
+import { addTask, deleteTask } from "../../features/TaskListSlice"; 
+import Swal from 'sweetalert2';  
+import { TbTrash } from 'react-icons/tb';
+import { Container, TaskForm, TaskInput, TaskButton, TaskMainTitle, TaskListItem, ItemTitle, ItemText } from "./ListStyled.js";
 
 export const ListComponent = () => {
-    const [tasks, setTasks] = useState([]);
-    const [title, setTitle] = useState();
-    const [description, setDescription] = useState();
+  const dispatch = useDispatch();
+  const TaskList = useSelector((state) => state.task.data); 
+  const TaskStatus = useSelector((state) => state.task.status); 
+  const TaskError = useSelector((state) => state.task.error); 
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
-    const addTask = (task) => {
-        const updatedTasks = [...tasks, task];
-        setTasks(updatedTasks);
-        localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-      };
-
-useEffect(() => {
-
-    const LocalTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-
-    const loadTasks = async () => {
-      const jsonTasks = data;
-      const allTasks = [...jsonTasks, ...LocalTasks];
-
-      //Limpiamos las tareas duplicadas by ID
-      const uniqueTasks = Array.from(new Map(allTasks.map(task => [task.id, task])).values());
-      setTasks(uniqueTasks);
-    };
-
-    loadTasks();
-  }, []);
-
-    const submitHandler = (event) => {
-        event.preventDefault();
-       const newTask =  {
-        id: Date.now(),
-        title,
-        description,
-        completed: false,
-       }
-       addTask(newTask);
-       setTitle();
-       setDescription();
+  useEffect(() => {
+    if (TaskStatus === 'idle') {
+      dispatch(TaskThunk());
+    } else if (TaskStatus === 'rejected') {
+      alert('Error: ' + TaskError);
     }
+  }, [TaskStatus, dispatch, TaskError]);
 
+  const submitHandler = (event) => {
+    event.preventDefault();
+    dispatch(addTask({
+      id: Date.now(),
+      title,
+      description,
+      completed: false,
+    }));
+    setTitle(''); 
+    setDescription('');
+  };
 
-    return (
-        <>
-          <form onSubmit={submitHandler}>
-            <input
-              type="text"
-              name="Task_Title"
-              placeholder="Task Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-            <input
-              type="text"
-              name="Task_Description"
-              placeholder="Task Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-            <button type="submit">Add Task</button>
-          </form>
-    
-          <ul>
-        {tasks.map((task) => (
-          <li key={task.id}>
-            <h3>{task.title}</h3>
-            <p>{task.description}</p>
-          </li>
+  const handleDeleteTask = (taskId) => {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            dispatch(deleteTask(taskId))  
+                .then(() => {
+                    Swal.fire('Deleted!', 'The task has been deleted.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', 'There was an error deleting the task.', 'error');
+                });
+        }
+    });
+  };
+
+  return (
+    <>
+    <Container>
+      <TaskForm onSubmit={submitHandler}>
+      <TaskMainTitle>To-Do List!</TaskMainTitle>
+        <TaskInput
+          type="text"
+          name="Task_Title"
+          placeholder="Task Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+        <TaskInput
+          type="text"
+          name="Task_Description"
+          placeholder="Task Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
+        <TaskButton  type="submit">Add Task</TaskButton >
+      </TaskForm>
+
+      <ul>
+        {TaskList.map((task) => (
+          <TaskListItem  key={task.id}>
+            <ItemTitle>{task.title}</ItemTitle>
+            <ItemText>{task.description}</ItemText>
+            <TbTrash title="Delete task" onClick={() => handleDeleteTask(task.id)} />  {/* Corregido de row.id a task.id */}
+          </TaskListItem >
         ))}
       </ul>
-        </>
-      );
-    };
+      </Container>
+    </>
+  );
+};
