@@ -4,6 +4,7 @@ import { TaskThunk } from "../../features/TaskListThunk";
 import { addTask, deleteTask } from "../../features/TaskListSlice"; 
 import Swal from 'sweetalert2';  
 import { TbTrash } from 'react-icons/tb';
+import { Container, TaskForm, TaskInput, TaskButton, TaskMainTitle, TaskListItem, ItemTitle, ItemText } from "./ListStyled.js";
 
 export const ListComponent = () => {
   const dispatch = useDispatch();
@@ -57,8 +58,10 @@ export const ListComponent = () => {
 
   return (
     <>
-      <form onSubmit={submitHandler}>
-        <input
+    <Container>
+      <TaskForm onSubmit={submitHandler}>
+      <TaskMainTitle>To-Do List!</TaskMainTitle>
+        <TaskInput
           type="text"
           name="Task_Title"
           placeholder="Task Title"
@@ -66,7 +69,7 @@ export const ListComponent = () => {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
-        <input
+        <TaskInput
           type="text"
           name="Task_Description"
           placeholder="Task Description"
@@ -74,18 +77,19 @@ export const ListComponent = () => {
           onChange={(e) => setDescription(e.target.value)}
           required
         />
-        <button type="submit">Add Task</button>
-      </form>
+        <TaskButton  type="submit">Add Task</TaskButton >
+      </TaskForm>
 
       <ul>
         {TaskList.map((task) => (
-          <li key={task.id}>
-            <h3>{task.title}</h3>
-            <p>{task.description}</p>
+          <TaskListItem  key={task.id}>
+            <ItemTitle>{task.title}</ItemTitle>
+            <ItemText>{task.description}</ItemText>
             <TbTrash title="Delete task" onClick={() => handleDeleteTask(task.id)} />  {/* Corregido de row.id a task.id */}
-          </li>
+          </TaskListItem >
         ))}
       </ul>
+      </Container>
     </>
   );
 };
